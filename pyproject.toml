@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "goph547lab01"
+version = "0.1.0"
+description = "GOPH 547 Lab 01 – Gravity forward modelling"
+requires-python = ">=3.8"
+
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "scipy",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
