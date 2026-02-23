@@ -91,19 +91,15 @@ def generate_mass_set(rng, m_total, rcm_target, max_tries=20000):
 
 
 def save_mass_set_mat(filepath, masses, locs):
-    """
-    Save to .mat with keys that are easy to reload.
-    """
     savemat(str(filepath), {
-        "masses": masses,
-        "locs": locs,   # shape (5,3): columns are x,y,z
+        "m": masses,
+        "xm": locs,
     })
-
 
 def load_mass_set_mat(filepath):
     data = loadmat(str(filepath))
-    masses = np.array(data["masses"]).flatten()
-    locs = np.array(data["locs"])
+    masses = np.array(data["m"]).flatten()
+    locs = np.array(data["xm"])
     return masses, locs
 
 
@@ -138,14 +134,14 @@ def ensure_dir(p: Path):
 
 
 def main():
-    # ===== Match your Part A parameters here =====
+    # ===== Matching Part A parameters =====
     m_total = 1.0e7
     rcm_target = np.array([0.0, 0.0, -10.0], dtype=float)
 
     z_list = [0.0, 10.0, 100.0]
     dx_list = [5.0, 25.0]
 
-    # Same spatial extent as your Part A script
+    # Same spatial extent as Part A script
     extent = 100.0
 
     rng = np.random.default_rng(547)
@@ -154,7 +150,7 @@ def main():
     outputs_dir = ensure_dir(script_dir.parent / "outputs")  # repo_root/outputs
 
     # ============================================================
-    # Part 6.1 + 6.2: Generate and save 3 sets of 5 masses
+    # Generate and save 3 sets of 5 masses
     # ============================================================
     for i in range(1, 4):
         masses, locs = generate_mass_set(rng, m_total, rcm_target)
@@ -174,8 +170,8 @@ def main():
         print(f"  Saved: {mat_path}")
 
     # ============================================================
-    # Part 6.3: For each set, plot U and gz like Part A
-    #          for dx = 5 and 25, and z = 0,10,100
+    # For each set, plot U and gz similar to Part A
+    # for dx = 5 and 25, and z = 0,10,100
     # ============================================================
     for dx in dx_list:
         x_vals = np.arange(-extent, extent + dx, dx)
@@ -224,7 +220,8 @@ def main():
 
             fig.suptitle(f"Multiple Point Masses (set {i}) — total m={m_total:.1e} kg, COM={rcm_target}", fontsize=14)
 
-            outname = outputs_dir / f"multi_mass_set{i}_dx{dx:g}.png".replace(".", "p")
+            dx_tag = str(dx).replace(".", "p")
+            outname = outputs_dir / f"multi_mass_set{i}_dx{dx_tag}.png"
             fig.savefig(outname, dpi=300)
             plt.close(fig)
 
