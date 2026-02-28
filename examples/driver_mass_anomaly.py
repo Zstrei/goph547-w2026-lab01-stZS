@@ -85,8 +85,6 @@ def forward_model_density(
     """
     Approximate each cell as a point mass at its centre:
       m_cell = rho * (dx_cell^3)
-
-    SPEED: keep only cells with rho >= rho_frac_cut * max(rho)
     """
     dV = dx_cell**3
 
@@ -205,18 +203,18 @@ def main():
     z_levels = [0.0, 1.0, 100.0, 110.0]
     gz_maps = {}
 
-    print("\nStarting forward modelling (this can take a bit)...")
+    print("\nStarting forward modelling")
     for zz in z_levels:
         print(f"  computing gz at z={zz} m")
         X, Y, U, gz = forward_model_density(x, y, z, rho, x_s, y_s, zz, rho_frac_cut=0.10)
         gz_maps[zz] = gz
 
-    # First-order FD for dgz/dz (requested in 7.5) – computed (not plotted)
+    # First-order FD for dgz/dz 
     dgz_dz_0 = (gz_maps[1.0] - gz_maps[0.0]) / 1.0
     dgz_dz_100 = (gz_maps[110.0] - gz_maps[100.0]) / 10.0
     print("Computed dgz/dz at z=0 and z=100 (first-order FD).")
 
-    # ---- 7.6 2×2 gz plots (FIXED: same color scale + one shared colorbar) ----
+    # ---- 7.6 2×2 gz plots 
     gz_stack = np.stack([gz_maps[z] for z in z_levels])
     vmin_gz = float(gz_stack.min())
     vmax_gz = float(gz_stack.max())
@@ -224,7 +222,7 @@ def main():
     fig, axes = plt.subplots(2, 2, figsize=(10, 9), constrained_layout=True)
     axes = axes.ravel()
 
-    # Keep last contour set so we can attach ONE colorbar
+    # Keep last contour set so can attach ONE colorbar
     last_cf = None
     for ax, zz in zip(axes, z_levels):
         last_cf = ax.contourf(X, Y, gz_maps[zz], 30, vmin=vmin_gz, vmax=vmax_gz, cmap="viridis")
