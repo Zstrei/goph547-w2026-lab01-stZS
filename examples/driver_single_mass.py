@@ -6,7 +6,7 @@ from goph547lab01.gravity import gravity_potential_point, gravity_effect_point
 
 
 def compute_fields_on_grid(x_vals, y_vals, z_obs, xm, m):
-    X, Y = np.meshgrid(x_vals, y_vals, indexing="xy")  # shape (ny, nx)
+    X, Y = np.meshgrid(x_vals, y_vals)  # shape (ny, nx)
     U = np.zeros_like(X, dtype=float)
     gz = np.zeros_like(X, dtype=float)
 
@@ -28,9 +28,12 @@ def main():
     # Two grid spacings to compare
     dx_list = [5.0, 25.0]
 
-    # outputs folder
-    output_dir = os.path.join(os.getcwd(), "outputs")
+    # force save to repo-root outputs folder
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.dirname(script_dir)
+    output_dir = os.path.join(repo_root, "outputs")
     os.makedirs(output_dir, exist_ok=True)
+    # ---------------------------------------------------------------
 
     for dx in dx_list:
         x_vals = np.arange(-100.0, 100.0 + dx, dx)
@@ -71,7 +74,10 @@ def main():
             axG.set_ylabel("y (m)")
             fig.colorbar(cG, ax=axG)
 
-        fig.suptitle(f"Single Point Mass Anomaly (m={m:.1e} kg, xm={xm})", fontsize=14)
+        fig.suptitle(
+            f"Single Point Mass Anomaly (m={m:.1e} kg, xm={xm})",
+            fontsize=14
+        )
 
         out_path = os.path.join(output_dir, f"partA_single_mass_dx{int(dx)}m.png")
         fig.savefig(out_path, dpi=300)
